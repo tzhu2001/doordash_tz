@@ -6,64 +6,15 @@ import Popover from '@material-ui/core/Popover';
 
 import { MenuItem, Typography } from '@material-ui/core';
 
-class MsgBubble extends React.Component {
-    constructor(props) {
-        super(props);   
+import IconButton from '@material-ui/core/IconButton';
+import FavIcon from '@material-ui/icons/Favorite';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import HappyIcon from '@material-ui/icons/Mood';
+import SadIcon from '@material-ui/icons/SentimentDissatisfied';
 
-        this.state = {
-            anchorEl: null,
-        };        
-    }
+import MsgBubble from 'components/MsgBubble';
 
-    handlePopoverOpen = event => {
-        this.setState({ anchorEl: event.currentTarget });
-    };
-    
-    handlePopoverClose = () => {
-        this.setState({ anchorEl: null });
-    };    
-
-    render() {        
-        const { anchorEl } = this.state;
-        const open = Boolean(anchorEl);
-
-        const {classes, message, id, reaction} = this.props
-
-        return (
-            <div className={classes.msgBubble} style={{position:'relative'}}
-                onMouseEnter={this.handlePopoverOpen}
-                onMouseLeave={this.handlePopoverClose}
-            >   
-                <Typography>{message}</Typography>
-                <Typography style={{whiteSpace:'nowrap', position:'absolute', bottom:'-10px', right:'5px'}}>h</Typography>
-                <Popover                    
-                    className={classes.popover}
-                    classes={{
-                        paper: classes.paper,
-                    }}
-                    open={open}
-                    anchorEl={anchorEl}
-                    anchorOrigin={{
-                        vertical: 'center',
-                        horizontal: 'left',
-                    }}                    
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'left',
-                    }}
-                    onClose={this.handlePopoverClose}
-                    disableRestoreFocus
-                    >
-                    
-                    <Typography>I use Popover.</Typography>
-                    
-                </Popover>                
-            </div>
-            )
-    }
-}
-
-const ChatItem = ({classes, name, login, message, id, reaction}) => (          
+const ChatItem = ({classes, name, login, message, id, reaction, onClickReaction}) => (          
     <div className={classes.msgContainer}>                        
         
         <div style={{display: 'flex', justifyContent: name===login?'flex-end':'flex-start'}}>
@@ -75,7 +26,9 @@ const ChatItem = ({classes, name, login, message, id, reaction}) => (
             <div style={{display:'flex', flexDirection: 'column'}}>
                 <div style={{flexGrow:1}}>   
                     <Typography variant="caption">{name}</Typography>
-                    <MsgBubble classes={classes} message={message} id={id} reaction={reaction} />                
+                    <MsgBubble classes={classes} name={name} login={login} 
+                                message={message} id={id} reaction={reaction}
+                                onClickReaction={onClickReaction} />                
                 </div>            
             </div>
         </div>

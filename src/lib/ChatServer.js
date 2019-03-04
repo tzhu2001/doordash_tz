@@ -21,6 +21,10 @@ class ChatServer {
     commitChatMessage(roomID, name, message) {
         simplePost( `${this._chat_server_url}/rooms/${roomID}/messages`, {name, message})
     }
+
+    setReaction(roomID, name, id, reaction) {
+        simplePost( `${this._chat_server_url}/rooms/${roomID}/messages`, {id, reaction})
+    }    
 }
 
 export default ChatServer;

@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
+import { Icon, Badge } from '@material-ui/core';
 
 import Hidden from '@material-ui/core/Hidden';
 import Menu from '@material-ui/core/Menu';
@@ -31,49 +32,22 @@ import { chatServerUrl, chatPullFrequency } from 'config'
 import ChatServer from 'lib/ChatServer';
 import LoginPane from 'components/LoginPane';
 import ChatItem from 'components/ChatItem'
+import ChatInput from 'components/ChatInput';
+
 import appMainStyles from 'views/styles.js'
+import logo from 'images/logo.png'
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import red from '@material-ui/core/colors/red';
 
 import { maxHeaderSize } from 'http';
-import { Icon, Badge } from '../../node_modules/@material-ui/core';
 
-class ChatInput extends React.Component {
-    constructor(props) {
-        super(props); 
-        this._textbox  = React.createRef();  
 
-        this.state = {
-            chatInput: '',
-        }
+const DDTheme = createMuiTheme({
+    palette: {      
+      primary: { main: red[500] }, // Purple and green play nicely together.      
     }
+  });
 
-    getMessage = () => {
-        return this.state.chatInput;
-    }
-
-    clearMessage = () => {
-        this.setState({chatInput:''})
-    }
-
-    setFocus = () => {        
-        this._textbox.current.focus()
-    }
-
-    render() {
-        const {classes} = this.props;
-        const {chatInput} = this.state;
-
-        return <InputBase 
-                    autoFocus
-                    inputRef={this._textbox}                    
-                    id="standard-textarea"                                
-                    placeholder="Type a message..."
-                    multiline
-                    className={classes.chatInput}                                
-                    onChange={(e)=>this.setState({chatInput:e.target.value})}
-                    value={chatInput}
-                    />
-    }
-}
 
 class AppMain extends React.Component {
     constructor(props) {
@@ -89,7 +63,7 @@ class AppMain extends React.Component {
             allRoomUsers: [],
 
             messages: [],
-            chatInput: '',
+            currentMsg: '',
 
             loginName: '', 
             loggedIn: true, 
@@ -245,7 +219,7 @@ class AppMain extends React.Component {
         const drawer = (
             <div>
                 <div className={classes.toolbar} style={{position:'relative'}}>
-                    <Typography>DoorDash Chat</Typography>
+                    <img src={logo} className={classes.logo}/>                    
                     <Typography variant={'caption'} className={classes.loginCaption}>{loginName} logged in {loginElapsedString} </Typography>
                 </div>
                 <Divider />
@@ -302,13 +276,20 @@ class AppMain extends React.Component {
         this.setState({mobileOpen: !this.state.mobileOpen});
     };
 
+    handleReaction = (reaction, id, newReactionId) => {
+        
+        this._chatServer.setReaction(id, [newReactionId])
+        
+    }
+
     render() {        
         const { classes, theme } = this.props;
-        const { loggedIn, rooms, messages, selectedRoomId, loginName, chatInput } = this.state;        
+        const { loggedIn, rooms, messages, selectedRoomId, loginName, currentMsg } = this.state;        
+        
         return (
-                <div>
-                    <div className={ loggedIn? classes.root : classes.rootLoggedOut } >
-                        <CssBaseline />
+                <MuiThemeProvider theme={DDTheme}>
+                    <CssBaseline />
+                    <div className={ loggedIn? classes.root : classes.rootLoggedOut } >                        
                         <AppBar position="fixed" className={classes.appBar}>
                             { this._renderToolbar() }
                         </AppBar>
@@ -320,8 +301,12 @@ class AppMain extends React.Component {
                             <div className={classes.toolbar} />
                             {messages.map(m => (
                                     <ChatItem classes={classes} key={m.id} 
-                                    login={loginName}
-                                    name={m.name} message={m.message} reaction={m.reaction} />                                    
+                                    login={loginName}  
+                                    id={m.id}                                  
+                                    name={m.name} message={m.message} 
+                                    reaction={m.reaction} 
+                                    onClickReaction={this.handleReaction}
+                                    />                                    
                                 ))}
                             <div className={classes.toolbar} ref={this._chatMsgEnd}/>
                         </main> 
@@ -332,8 +317,8 @@ class AppMain extends React.Component {
                                 <ChatInput ref={this._chatInput} classes={classes} />
                                 <IconButton onClick={(e)=>{ this._chatServer.commitChatMessage(selectedRoomId, loginName, this._chatInput.current.getMessage() );
                                                             this._chatInput.current.clearMessage()
-                                                            this.setState({chatInput:'',
-                                                                            messages:[...messages, {name:loginName, message:chatInput, id:'_sending_', reaction:[]}]})
+                                                            this.setState({currentMsg:'',
+                                                                            messages:[...messages, {name:loginName, message:currentMsg, id:'_sending_', reaction:[]}]})
                                                             
                                                             }}>
                                     <SendIcon/>
@@ -342,6 +327,7 @@ class AppMain extends React.Component {
                         </AppBar>                                                            
                     </div>
                     <LoginPane show={!loggedIn} 
+                                classes={classes}
                                 rooms={rooms} 
                                 selectedRoomId={selectedRoomId} 
                                 loginName={loginName}
@@ -349,7 +335,7 @@ class AppMain extends React.Component {
                                 setSelectedRoomId={this.setSelectedRoomId}
                                 onEnterClick={this.handleEnterChat}
                     />                           
-                </div>
+                </MuiThemeProvider>
                 )
     }
 }

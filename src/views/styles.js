@@ -4,7 +4,10 @@ const appMainStyles = theme => ({
         display: 'flex',
     },    
     rootLoggedOut: {
-        display: 'none'
+        display: 'none',
+    },
+    loginPane: {
+        padding: theme.spacing.unit*3,
     },
     smallAvatar: {
         width: theme.spacing.unit * 4,
@@ -24,6 +27,8 @@ const appMainStyles = theme => ({
     },
     chatInput: {
         flexGrow: 1,
+    },
+    messageText: {
     },
     othersMessage: {
         paddingRight: "25%",
@@ -83,6 +88,34 @@ const appMainStyles = theme => ({
     paper: {
         padding: theme.spacing.unit,
     },    
+    responseDisplay: {
+        whiteSpace: 'nowrap',
+        position: 'absolute',
+        bottom: -theme.spacing.unit*3,
+        right: theme.spacing.unit        
+    },        
+    responseMenu: {
+        background: theme.palette.background.default,
+        color: theme.palette.secondary.dark,
+        whiteSpace: 'nowrap',
+        position: 'absolute',
+        bottom: -theme.spacing.unit*4,        
+        borderRadius: theme.spacing.unit,
+        paddingTop: theme.spacing.unit/2        
+    },
+    reactionIcon: {        
+        height: theme.spacing.unit*4, 
+        width: theme.spacing.unit*4,
+        padding: theme.spacing.unit/2,
+        '&:hover': {
+            color: theme.palette.secondary.light,        
+        }
+    },
+    logo: {
+        marginLeft: theme.spacing.unit,
+        height: theme.spacing.unit * 6
+
+    }
 });
 
 export default appMainStyles;

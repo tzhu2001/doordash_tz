@@ -95,6 +95,9 @@ export function getUrlVar(variable, defaultValue) {
     return defaultValue;
 }
 
+/**
+ * Get from url end point using fetch and return response
+ */
 export async function simpleGet(url) {
     try {
         const response = await fetch(url, {            
@@ -110,6 +113,9 @@ export async function simpleGet(url) {
     }
 }
 
+/**
+ * Post to ur  end point using fetch and return response
+ */
 export async function simplePost(url, data) {
     try {
         const response = await fetch(url, {
